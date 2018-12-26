@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { actionCreators } from '../store/WeatherForecasts';
+import { actionCreators } from '../store/Comics';
 
-class FetchData extends Component {
+class Comics extends Component {
   componentDidMount() {
-    // This method is called when the component is first added to the document
     this.ensureDataFetched();
   }
 
@@ -16,23 +15,23 @@ class FetchData extends Component {
   }
 
   ensureDataFetched() {
-    const startDateIndex = parseInt(this.props.match.params.startDateIndex, 10) || 0;
-    this.props.requestWeatherForecasts(startDateIndex);
+    const title = 'hulk'
+    this.props.searchComics(title);
   }
 
   render() {
     return (
       <div>
-        <h1>Weather forecast</h1>
-        <p>This component demonstrates fetching data from the server and working with URL parameters.</p>
-        {renderForecastsTable(this.props)}
+        <h1>Comic Search</h1>
+        <p>Enter a comic name and click Search.</p>
+        {renderSearchResults(this.props)}
         {renderPagination(this.props)}
       </div>
     );
   }
 }
 
-function renderForecastsTable(props) {
+function renderSearchResults(props) {
   return (
     <table className='table table-striped'>
       <thead>
@@ -69,6 +68,6 @@ function renderPagination(props) {
 }
 
 export default connect(
-  state => state.weatherForecasts,
+  state => state.comicSearch,
   dispatch => bindActionCreators(actionCreators, dispatch)
-)(FetchData);
+)(Comics);

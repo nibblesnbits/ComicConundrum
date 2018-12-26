@@ -1,6 +1,6 @@
 const requestWeatherForecastsType = 'REQUEST_WEATHER_FORECASTS';
 const receiveWeatherForecastsType = 'RECEIVE_WEATHER_FORECASTS';
-const initialState = { forecasts: [], isLoading: false };
+const initialState = { comics: [], isLoading: false };
 
 export const actionCreators = {
   requestWeatherForecasts: startDateIndex => async (dispatch, getState) => {
