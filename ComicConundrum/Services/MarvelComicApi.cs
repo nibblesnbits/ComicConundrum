@@ -20,7 +20,7 @@ namespace ComicConundrum.Services {
             _privateKey = privateKey;
         }
 
-        public async Task<IEnumerable<ComicListing>> SearchComicsByTitle(string title) {
+        public async Task<IEnumerable<ComicListing>> SearchByTitleAsync(string title) {
             var client = _httpClientFactory.CreateClient(ClientName);
             var parameters = new Dictionary<string, string> {
                 { "format", "comic" },
@@ -40,11 +40,24 @@ namespace ComicConundrum.Services {
             return result.Data.Results;
         }
 
-        private string CreateRequestParams(IEnumerable<KeyValuePair<string,string>> parameters) {
+        public async Task<ComicListing> GetById(int id) {
+            var client = _httpClientFactory.CreateClient(ClientName);
+            var queryString = CreateRequestParams();
+            var response = await client.GetAsync($"comics/{id}?{queryString}");
+            if (!response.IsSuccessStatusCode) {
+                throw new MarvelApiException(await response.Content.ReadAsAsync<MarvelApiError>());
+            }
+
+            var data = await response.Content.ReadAsStringAsync();
+            //var result = await response.Content.ReadAsAsync<MarvelApiResponse<ComicListing>>();
+            return null;
+        }
+
+        private string CreateRequestParams(IEnumerable<KeyValuePair<string,string>> parameters = null) {
             var ts = DateTime.UtcNow.ToString("o");
             var hash = CalculateMD5Hash(ts + _privateKey + _publicKey).ToLower();
             return string.Join("&",
-                parameters.Select(p => $"{p.Key}={p.Value}")
+                (parameters ?? new KeyValuePair<string, string>[0]).Select(p => $"{p.Key}={p.Value}")
                 .Union(new Dictionary<string, string> {
                     { "apikey", _publicKey },
                     { "hash", hash },

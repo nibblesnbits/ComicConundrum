@@ -1,43 +1,68 @@
-﻿const searchComics = 'REQUEST_COMIC_SEARCH';
+﻿const search = 'REQUEST_COMIC_SEARCH';
 const recieveSearchResults = 'RECEIVE_COMIC_SEARCH';
-const initialState = { comics: [], isLoading: false };
+const getById = 'REQUEST_COMIC';
+const getByIdComplete = 'REQUEST_COMIC_COMPLETE';
+const initialState = {
+  searchResults: [],
+  isLoading: false
+};
 
 export const actionCreators = {
-    searchComics: title => async (dispatch, getState) => {
-        if (title === getState().comicSearch.title) {
-            // Don't issue a duplicate request (we already have or are loading the requested data)
-            return;
-        }
+  search: title => async (dispatch) => {
+    dispatch({ type: search, title });
 
-        dispatch({ type: searchComics, title });
+    const url = `api/comics/search?title=${encodeURIComponent(title)}`;
+    const response = await fetch(url);
+    const searchResults = await response.json();
 
-        const url = `api/comics/search?title=${title}`;
-        const response = await fetch(url);
-        const comics = await response.json();
+    dispatch({ type: recieveSearchResults, title, searchResults });
+  },
+  getById: id => async (dispatch) => {
+    dispatch({ type: getById, id });
 
-        dispatch({ type: recieveSearchResults, title, comics });
-    }
+    const url = `api/comics/${id}`;
+    const response = await fetch(url);
+    const comic = await response.json();
+
+    dispatch({ type: getByIdComplete, comic });
+  },
 };
 
 export const reducer = (state, action) => {
-    state = state || initialState;
+  state = state || initialState;
 
-    if (action.type === searchComics) {
-        return {
-            ...state,
-            title: action.title,
-            isLoading: true
-        };
-    }
+  if (action.type === search) {
+    return {
+      ...state,
+      title: action.title,
+      isLoading: true
+    };
+  }
 
-    if (action.type === recieveSearchResults) {
-        return {
-            ...state,
-            title: action.title,
-            comics: action.comics,
-            isLoading: false
-        };
-    }
+  if (action.type === getById) {
+    return {
+      ...state,
+      id: action.id,
+      isLoading: true
+    };
+  }
 
-    return state;
+  if (action.type === recieveSearchResults) {
+    return {
+      ...state,
+      title: action.title,
+      searchResults: action.searchResults,
+      isLoading: false
+    };
+  }
+
+  if (action.type === getByIdComplete) {
+    return {
+      ...state,
+      comic: action.comic,
+      isLoading: false
+    };
+  }
+
+  return state;
 };

@@ -1,14 +1,15 @@
 import React from 'react';
 import { Route } from 'react-router';
 import Layout from './components/Layout';
-import Home from './components/Home';
-import Counter from './components/Counter';
-import FetchData from './components/Comics';
+import Search from './components/Search';
+import Collection from './components/Collection';
+import Comic from './components/Comic';
+import './App.css';
 
 export default () => (
   <Layout>
-    <Route exact path='/' component={Home} />
-    <Route path='/counter' component={Counter} />
-    <Route path='/fetch-data/:startDateIndex?' component={FetchData} />
+    <Route exact path='/' component={Search} />
+    <Route path='/collection' component={Collection} />
+    <Route path='/Comic/:id' component={Comic} />
   </Layout>
 );

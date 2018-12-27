@@ -28,6 +28,12 @@ namespace ComicConundrum.Services {
                 UriFactory.CreateDocumentCollectionUri(DatbaseName, CollectionName), comic);
         }
 
+
+        public async Task DeleteComicAsync(int id) {
+            await _client.DeleteDocumentAsync(
+                UriFactory.CreateDocumentUri(DatbaseName, CollectionName, id.ToString()));
+        }
+
         public IEnumerable<ComicListing> GetAllComics() {
             var lines = _client.CreateDocumentQuery<ComicListing>(_collectionUri)
                 .AsEnumerable();
