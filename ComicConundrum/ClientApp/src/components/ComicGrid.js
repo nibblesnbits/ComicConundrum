@@ -15,7 +15,7 @@ export default function ComicGrid({ comics, size, saveClick, deleteClick, ownedL
                 comic={c}
                 saveClick={saveClick}
                 deleteClick={deleteClick}
-                owned={deleteClick || (ownedList || []).indexOf(c.id) > -1}
+                owned={(ownedList || []).indexOf(c.id) > -1}
               />
             </Col>
           ))}

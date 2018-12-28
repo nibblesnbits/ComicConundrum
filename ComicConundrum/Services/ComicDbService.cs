@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ComicConundrum.Services.Models;
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
 namespace ComicConundrum.Services {
     public class ComicDbService : IDisposable {
         private readonly DocumentClient _client;
         private const string DatbaseName = "comics";
-        private const string CollectionName = "owned";
+        private const string CollectionName = "collection";
         private readonly Uri _collectionUri =
             UriFactory.CreateDocumentCollectionUri(DatbaseName, CollectionName);
 
@@ -29,9 +30,19 @@ namespace ComicConundrum.Services {
         }
 
 
-        public async Task DeleteComicAsync(int id) {
-            await _client.DeleteDocumentAsync(
-                UriFactory.CreateDocumentUri(DatbaseName, CollectionName, id.ToString()));
+        public Task DeleteComicAsync(string id) {
+            return _client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(DatbaseName, CollectionName, id), new RequestOptions {
+                PartitionKey = new PartitionKey("Comic")
+            });
+            //var query = _client.CreateDocumentQuery(
+            //    UriFactory.CreateDocumentCollectionUri(DatbaseName, CollectionName), new SqlQuerySpec {
+            //        QueryText = "SELECT c.id FROM c WHERE c.id = @id",
+            //        Parameters = new SqlParameterCollection(new SqlParameter[] { new SqlParameter("@id", id) })
+            //    })
+            //    .AsEnumerable().SingleOrDefault();
+            //if (query != null) {
+            //    await _client.DeleteDocumentAsync(query.SelfLink);
+            //}
         }
 
         public IEnumerable<ComicListing> GetAllComics() {

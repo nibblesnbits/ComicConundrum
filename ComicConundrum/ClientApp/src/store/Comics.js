@@ -8,7 +8,10 @@ const initialState = {
 };
 
 export const actionCreators = {
-  search: title => async (dispatch) => {
+  search: title => async (dispatch, getState) => {
+    if (getState().comics.isLoading) {
+      return;
+    }
     dispatch({ type: search, title });
 
     const url = `api/comics/search?title=${encodeURIComponent(title)}`;

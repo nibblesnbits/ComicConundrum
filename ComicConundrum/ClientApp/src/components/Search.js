@@ -45,7 +45,7 @@ class Search extends Component {
   }
 
   render() {
-    const { owned } = this.props;
+    const { owned, isLoading } = this.props;
     return (
       <div>
         <h1>Comic Search</h1>
@@ -54,8 +54,8 @@ class Search extends Component {
             <Col sm="auto">
               <input type="search" onChange={this.searchChange} value={this.state.term} />
             </Col>
-            <Col sm="auto">
-              {this.props.isLoading &&
+            <Col sm="1">
+              {isLoading &&
                 <div className="spinner">
                   <div className="rect1"></div>
                   <div className="rect2"></div>
@@ -84,7 +84,8 @@ const makeMapStateToProps = () => {
   const mapStateToProps = (state, props) => {
     return {
       searchResults: state.comics.searchResults,
-      owned: getIds(state)
+      owned: getIds(state),
+      isLoading: state.comics.isLoading
     };
   };
   return mapStateToProps;

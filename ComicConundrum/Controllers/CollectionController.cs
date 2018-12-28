@@ -14,11 +14,6 @@ namespace ComicConundrum.Controllers {
             _comicDbService = comicDbService;
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> Search(string title) {
-            throw new NotImplementedException();
-        }
-
         [HttpPost("[action]")]
         public async Task<IActionResult> Save([FromBody]ComicListing comic) {
             await _comicDbService.SaveComicAsync(comic);
@@ -26,7 +21,7 @@ namespace ComicConundrum.Controllers {
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Save(int id) {
+        public async Task<IActionResult> Save(string id) {
             await _comicDbService.DeleteComicAsync(id);
             return Ok();
         }
