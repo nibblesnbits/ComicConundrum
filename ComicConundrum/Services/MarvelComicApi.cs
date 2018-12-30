@@ -47,10 +47,8 @@ namespace ComicConundrum.Services {
             if (!response.IsSuccessStatusCode) {
                 throw new MarvelApiException(await response.Content.ReadAsAsync<MarvelApiError>());
             }
-
-            var data = await response.Content.ReadAsStringAsync();
-            //var result = await response.Content.ReadAsAsync<MarvelApiResponse<ComicListing>>();
-            return null;
+            var result = await response.Content.ReadAsAsync<MarvelApiResponse<ComicListing>>();
+            return result.Data.Results.FirstOrDefault();
         }
 
         private string CreateRequestParams(IEnumerable<KeyValuePair<string,string>> parameters = null) {

@@ -4,7 +4,8 @@ const getById = 'REQUEST_COMIC';
 const getByIdComplete = 'REQUEST_COMIC_COMPLETE';
 const initialState = {
   searchResults: [],
-  isLoading: false
+  isLoading: false,
+  current: undefined
 };
 
 export const actionCreators = {
@@ -62,7 +63,7 @@ export const reducer = (state, action) => {
   if (action.type === getByIdComplete) {
     return {
       ...state,
-      comic: action.comic,
+      current: action.comic,
       isLoading: false
     };
   }
