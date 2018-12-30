@@ -3,7 +3,7 @@ import { Container, Row, Col } from 'reactstrap';
 import ComicCard from './ComicCard'
 import { batchArray } from '../util';
 
-export default function ComicGrid({ comics, size, saveClick, deleteClick, ownedList }) {
+export default function ComicGrid({ comics, size, saveClick, deleteClick, ownedList, isLoading }) {
   const rows = batchArray(comics, size || 6);
   return (
     <Container>
@@ -15,6 +15,7 @@ export default function ComicGrid({ comics, size, saveClick, deleteClick, ownedL
                 comic={c}
                 saveClick={saveClick}
                 deleteClick={deleteClick}
+                isLoading={isLoading}
                 owned={(ownedList || []).indexOf(c.id) > -1}
               />
             </Col>

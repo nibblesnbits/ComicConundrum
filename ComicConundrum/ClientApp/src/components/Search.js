@@ -37,6 +37,7 @@ class Search extends Component {
 
   deleteComic(id) {
     this.props.delete(id);
+    this.props.getCollection();
   }
 
   saveComic(comic) {
@@ -45,7 +46,7 @@ class Search extends Component {
   }
 
   render() {
-    const { owned, isLoading } = this.props;
+    const { owned, isLoading, actingOnCollection } = this.props;
     return (
       <div>
         <h1>Comic Search</h1>
@@ -67,15 +68,20 @@ class Search extends Component {
             </Col>
           </Row>
         </Container>
-        {renderGrid(this.props, this.saveComic, this.deleteComic, owned)}
+        {renderGrid(this.props, this.saveComic, this.deleteComic, owned, actingOnCollection)}
       </div>
     );
   }
 }
 
-function renderGrid({ searchResults }, saveClick, deleteClick, owned) {
+function renderGrid({ searchResults }, saveClick, deleteClick, owned, isLoading) {
   return (
-    <ComicGrid comics={searchResults} saveClick={saveClick} deleteClick={deleteClick} ownedList={owned} />
+    <ComicGrid 
+      comics={searchResults} 
+      saveClick={saveClick} 
+      deleteClick={deleteClick} 
+      ownedList={owned}
+      isLoading={isLoading} />
   );
 }
 
@@ -83,9 +89,9 @@ const makeMapStateToProps = () => {
   const getIds = makeGetCollectionIds();
   const mapStateToProps = (state, props) => {
     return {
-      searchResults: state.comics.searchResults,
+      ...state.comics,
       owned: getIds(state),
-      isLoading: state.comics.isLoading
+      actingOnCollection: state.collection.isLoading
     };
   };
   return mapStateToProps;

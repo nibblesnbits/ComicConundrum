@@ -40,20 +40,34 @@ class Collection extends Component {
   }
 
   render() {
-    const { owned } = this.props;
+    const { owned, isLoading } = this.props;
     return (
       <div>
         <h1>My Collection</h1>
         <input type="search" onChange={this.filterChange} value={this.state.filter} placeholder="Search" />
-        {renderGrid(this.props, this.deleteComic, owned)}
+        {isLoading &&
+          <div className="spinner">
+            <div className="rect1"></div>
+            <div className="rect2"></div>
+            <div className="rect3"></div>
+            <div className="rect4"></div>
+            <div className="rect5"></div>
+          </div>
+        }
+        {renderGrid(this.props, this.deleteComic, owned, isLoading)}
       </div>
     );
   }
 }
 
-function renderGrid({ comics }, deleteClick, owned) {
+function renderGrid({ comics }, deleteClick, owned, isLoading) {
   return (
-    <ComicGrid comics={comics} size={4} deleteClick={deleteClick} ownedList={owned} />
+    <ComicGrid 
+    comics={comics} 
+    size={4} 
+    deleteClick={deleteClick} 
+    ownedList={owned}
+    isLoading={isLoading} />
   );
 }
 
@@ -62,9 +76,9 @@ const makeMapStateToProps = () => {
   const filteredCollection = makeGetFilteredCollection();
   const mapStateToProps = (state, props) => {
     return {
+      ...state.collection,
       comics: filteredCollection(state),
       owned: getIds(state),
-      filter: state.collection.filter
     };
   };
   return mapStateToProps;
