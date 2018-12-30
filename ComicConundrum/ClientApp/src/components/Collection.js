@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { actionCreators } from '../store/Collection';
+import { actionCreators as comicsActions } from '../store/Comics';
+import { actionCreators as collectionActions } from '../store/Collection';
 import ComicGrid from './ComicGrid';
 import { debounce } from '../util';
 import { makeGetFilteredCollection, makeGetCollectionIds } from '../selectors/collectionSelectors';
@@ -22,6 +23,7 @@ class Collection extends Component {
 
   deleteComic(id) {
     this.props.delete(id);
+    this.props.getCollection();
   }
 
   search(filter) {
@@ -70,5 +72,5 @@ const makeMapStateToProps = () => {
 
 export default connect(
   makeMapStateToProps,
-  dispatch => bindActionCreators(actionCreators, dispatch)
+  dispatch => bindActionCreators({ ...comicsActions, ...collectionActions }, dispatch)
 )(Collection);

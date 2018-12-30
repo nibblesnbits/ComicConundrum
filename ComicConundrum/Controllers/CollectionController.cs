@@ -31,5 +31,10 @@ namespace ComicConundrum.Controllers {
             var comics = _comicDbService.GetAllComics();
             return Ok(comics);
         }
+
+        protected override void Dispose(bool disposing) {
+            _comicDbService.Dispose();
+            base.Dispose(disposing);
+        }
     }
 }

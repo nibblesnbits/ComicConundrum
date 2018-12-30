@@ -9,40 +9,33 @@ using Microsoft.Azure.Documents.Client;
 namespace ComicConundrum.Services {
     public class ComicDbService : IDisposable {
         private readonly DocumentClient _client;
-        private const string DatbaseName = "comics";
+        private const string DatabaseName = "comics";
         private const string CollectionName = "collection";
         private readonly Uri _collectionUri =
-            UriFactory.CreateDocumentCollectionUri(DatbaseName, CollectionName);
+            UriFactory.CreateDocumentCollectionUri(DatabaseName, CollectionName);
 
         public ComicDbService(DocumentClient client) {
             _client = client;
+            _client.CreateDatabaseIfNotExistsAsync(new Database() { Id = DatabaseName });
+            _client.CreateDocumentCollectionIfNotExistsAsync(
+                UriFactory.CreateDatabaseUri(DatabaseName),
+                new DocumentCollection { Id = CollectionName });
         }
 
         public async Task<ComicListing> GetComicById(string id) {
             var comic = await _client.ReadDocumentAsync<ComicListing>(
-                UriFactory.CreateDocumentUri(DatbaseName, CollectionName, id));
+                UriFactory.CreateDocumentUri(DatabaseName, CollectionName, id));
             return comic;
         }
 
         public async Task SaveComicAsync(ComicListing comic) {
-            await _client.CreateDocumentAsync(
-                UriFactory.CreateDocumentCollectionUri(DatbaseName, CollectionName), comic);
+            await _client.CreateDocumentAsync(_collectionUri, comic);
         }
 
 
         public Task DeleteComicAsync(string id) {
-            return _client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(DatbaseName, CollectionName, id), new RequestOptions {
-                PartitionKey = new PartitionKey("Comic")
-            });
-            //var query = _client.CreateDocumentQuery(
-            //    UriFactory.CreateDocumentCollectionUri(DatbaseName, CollectionName), new SqlQuerySpec {
-            //        QueryText = "SELECT c.id FROM c WHERE c.id = @id",
-            //        Parameters = new SqlParameterCollection(new SqlParameter[] { new SqlParameter("@id", id) })
-            //    })
-            //    .AsEnumerable().SingleOrDefault();
-            //if (query != null) {
-            //    await _client.DeleteDocumentAsync(query.SelfLink);
-            //}
+            return _client.DeleteDocumentAsync(
+                UriFactory.CreateDocumentUri(DatabaseName, CollectionName, id));
         }
 
         public IEnumerable<ComicListing> GetAllComics() {
